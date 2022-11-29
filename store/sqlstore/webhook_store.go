@@ -43,9 +43,9 @@ func (s SqlWebhookStore) SaveIncoming(webhook *model.IncomingWebhook) (*model.In
 	}
 
 	if _, err := s.GetMasterX().NamedExec(`INSERT INTO IncomingWebhooks
-		(Id, CreateAt, UpdateAt, DeleteAt, UserId, ChannelId, TeamId, DisplayName, Description, Username, IconURL, ChannelLocked)
+		(Id, CreateAt, UpdateAt, DeleteAt, UserId, ChannelId, TeamId, DisplayName, Description, Username, IconURL, ChannelLocked, Enabled)
 		VALUES
-		(:Id, :CreateAt, :UpdateAt, :DeleteAt, :UserId, :ChannelId, :TeamId, :DisplayName, :Description, :Username, :IconURL, :ChannelLocked)`, webhook); err != nil {
+		(:Id, :CreateAt, :UpdateAt, :DeleteAt, :UserId, :ChannelId, :TeamId, :DisplayName, :Description, :Username, :IconURL, :ChannelLocked, :Enabled)`, webhook); err != nil {
 		return nil, errors.Wrapf(err, "failed to save IncomingWebhook with id=%s", webhook.Id)
 	}
 
@@ -57,7 +57,7 @@ func (s SqlWebhookStore) UpdateIncoming(hook *model.IncomingWebhook) (*model.Inc
 
 	_, err := s.GetMasterX().NamedExec(`UPDATE IncomingWebhooks SET
 			CreateAt=:CreateAt, UpdateAt=:UpdateAt, DeleteAt=:DeleteAt, ChannelId=:ChannelId, TeamId=:TeamId, DisplayName=:DisplayName,
-			Description=:Description, Username=:Username, IconURL=:IconURL, ChannelLocked=:ChannelLocked
+			Description=:Description, Username=:Username, IconURL=:IconURL, ChannelLocked=:ChannelLocked, Enabled=:Enabled
 			WHERE Id=:Id`, hook)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to update IncomingWebhook with id=%s", hook.Id)
@@ -187,10 +187,10 @@ func (s SqlWebhookStore) SaveOutgoing(webhook *model.OutgoingWebhook) (*model.Ou
 
 	if _, err := s.GetMasterX().NamedExec(`INSERT INTO OutgoingWebhooks
 			(Id, Token, CreateAt, UpdateAt, DeleteAt, CreatorId, ChannelId, TeamId, TriggerWords, TriggerWhen,
-			CallbackURLs, DisplayName, Description, ContentType, Username, IconURL)
+			CallbackURLs, DisplayName, Description, ContentType, Username, IconURL, Enabled)
 			VALUES
 			(:Id, :Token, :CreateAt, :UpdateAt, :DeleteAt, :CreatorId, :ChannelId, :TeamId, :TriggerWords, :TriggerWhen,
-			:CallbackURLs, :DisplayName, :Description, :ContentType, :Username, :IconURL)`, webhook); err != nil {
+			:CallbackURLs, :DisplayName, :Description, :ContentType, :Username, :IconURL, :Enabled)`, webhook); err != nil {
 		return nil, errors.Wrapf(err, "failed to save OutgoingWebhook with id=%s", webhook.Id)
 	}
 
@@ -347,7 +347,7 @@ func (s SqlWebhookStore) UpdateOutgoing(hook *model.OutgoingWebhook) (*model.Out
 			CreateAt = :CreateAt, UpdateAt = :UpdateAt, DeleteAt = :DeleteAt, Token = :Token, CreatorId = :CreatorId,
 			ChannelId = :ChannelId, TeamId = :TeamId, TriggerWords = :TriggerWords, TriggerWhen = :TriggerWhen,
 			CallbackURLs = :CallbackURLs, DisplayName = :DisplayName, Description = :Description,
-			ContentType = :ContentType, Username = :Username, IconURL = :IconURL WHERE Id = :Id`, hook)
+			ContentType = :ContentType, Username = :Username, IconURL = :IconURL, Enabled = :Enabled WHERE Id = :Id`, hook)
 	if err != nil {
 		return nil, errors.Wrapf(err, "failed to update OutgoingWebhook with id=%s", hook.Id)
 	}
