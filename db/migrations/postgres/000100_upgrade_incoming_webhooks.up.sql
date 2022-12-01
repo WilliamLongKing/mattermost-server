@@ -1,1 +1,0 @@
-ALTER TABLE incomingwebhooks ADD COLUMN IF NOT EXISTS enabled boolean NOT NULL DEFAULT TRUE;
