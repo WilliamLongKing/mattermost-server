@@ -55,7 +55,7 @@ func (a *App) handleWebhookEvents(c request.CTX, post *model.Post, team *model.T
 
 	relevantHooks := []*model.OutgoingWebhook{}
 	for _, hook := range hooks {
-		if hook.ChannelId == post.ChannelId || hook.ChannelId == "" {
+		if hook.Enabled && (hook.ChannelId == post.ChannelId || hook.ChannelId == "") {
 			if hook.ChannelId == post.ChannelId && len(hook.TriggerWords) == 0 {
 				relevantHooks = append(relevantHooks, hook)
 				triggerWord = ""
@@ -688,6 +688,9 @@ func (a *App) HandleIncomingWebhook(c *request.Context, hookID string, req *mode
 	}
 	hook = result.Data.(*model.IncomingWebhook)
 
+	if !hook.Enabled {
+		return model.NewAppError("HandleIncomingWebhook", "web.incoming_webhook.disabled.app_error", nil, "", http.StatusNotImplemented)
+	}
 	uchan := make(chan store.StoreResult, 1)
 	go func() {
 		user, err := a.Srv().Store().User().Get(context.Background(), hook.UserId)
